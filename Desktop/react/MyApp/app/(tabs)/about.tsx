@@ -1,3 +1,4 @@
+//about.tsx displays about me page
 
 import { styles } from '../../assets/my_styles';
 import EditScreenInfo from '@/components/EditScreenInfo';

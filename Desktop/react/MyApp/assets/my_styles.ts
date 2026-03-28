@@ -1,3 +1,6 @@
+//my_styles.ts
+//contains all necessary styling
+
 import { StyleSheet, Dimensions } from 'react-native';
 
 const { width } = Dimensions.get('window');
