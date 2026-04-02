@@ -7,7 +7,7 @@ const BASE_URL = 'https://cs-webapps.bu.edu/airlin/dadjokes';
 
 interface Joke {
   text: string;
-  name: string;        // ✅ was 'contributor', it's actually 'name'
+  name: string;       
   timestamp: string;
 }
 
@@ -20,7 +20,7 @@ export default function JokesListScreen() {
       try {
         const response = await fetch(`${BASE_URL}/api/jokes`);
         const data = await response.json();
-        setJokes(data.results);  // ✅ was 'data', now 'data.results'
+        setJokes(data.results);  
       } catch (error) {
         console.error('Error fetching jokes:', error);
       } finally {
@@ -41,7 +41,7 @@ export default function JokesListScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>List of Jokes 😄</Text>
+      <Text style={styles.title}>List of Jokes</Text>
       <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
 
       <FlatList
