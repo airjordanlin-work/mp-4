@@ -1,3 +1,10 @@
+
+/*jokes_list.tsx 
+
+Uses fetch to call API and GET data from API and display it on the screen
+
+@author: Jordan Lin
+*/
 import { FlatList, ActivityIndicator } from 'react-native';
 import { useEffect, useState } from 'react';
 import { Text, View } from '@/components/Themed';
@@ -5,12 +12,20 @@ import { styles } from '../../assets/my_styles';
 
 const BASE_URL = 'https://cs-webapps.bu.edu/airlin/dadjokes';
 
+/** Represents a single Joke from the API */
 interface Joke {
   text: string;
   name: string;       
   timestamp: string;
 }
 
+
+/**
+ * JokesListScreen
+ * 
+ * Fetches all jokes from the our created REST API in DJANGO and displays
+ * them in a scrollable list using FlatList.
+ */
 export default function JokesListScreen() {
   const [jokes, setJokes] = useState<Joke[]>([]);
   const [loading, setLoading] = useState(true);

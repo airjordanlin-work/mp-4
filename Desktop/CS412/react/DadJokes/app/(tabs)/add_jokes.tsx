@@ -1,3 +1,11 @@
+/*add_jokes.tsx 
+
+A screen that allows users to submit a new dad joke to the database.
+Collects the joke text and contributor name, then POSTs to the REST API.
+
+@author: Jordan Lin
+*/
+
 import { TextInput, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
 import { useState } from 'react';
 import { Text, View } from '@/components/Themed';
@@ -19,8 +27,6 @@ export default function AddJokeScreen() {
     setLoading(true);
 
     try {
-      console.log('Sending POST to:', `${BASE_URL}/api/jokes`);
-      console.log('Payload:', { text: jokeText, name });
 
       const response = await fetch(`${BASE_URL}/api/jokes`, {
         method: 'POST',
@@ -33,21 +39,17 @@ export default function AddJokeScreen() {
         }),
       });
 
-      console.log('Response status:', response.status);
-      console.log('Response ok?:', response.ok);
-
       const data = await response.json();
-      console.log('Response data:', data);
 
       if (response.ok) {
-        Alert.alert('Success! 🎉', 'Your joke has been added!');
-        setJokeText('');  // Clear fields after success
+        Alert.alert('Success!', 'Your joke has been added!');
+        setJokeText('');  
         setName('');
       } else {
+        const data = await response.json();
         Alert.alert('Error', `Failed to add joke: ${JSON.stringify(data)}`);
       }
     } catch (error) {
-      console.error('Error posting joke:', error);
       Alert.alert('Error', 'Something went wrong. Please try again.');
     } finally {
       setLoading(false);
@@ -56,7 +58,7 @@ export default function AddJokeScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Add a Joke 😄</Text>
+      <Text style={styles.title}>Add a Joke</Text>
       <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
 
       <TextInput

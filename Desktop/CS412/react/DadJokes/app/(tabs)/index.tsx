@@ -1,17 +1,25 @@
-import { Image, ActivityIndicator, Button} from 'react-native';
+/*
+ * index.tsx
+ * 
+ * @author Jordan Lin
+ */
+
+import { Image, ActivityIndicator, Button } from 'react-native';
 import { useEffect, useState } from 'react';
 import { Text, View } from '@/components/Themed';
 import { styles } from '../../assets/my_styles';
 
 const BASE_URL = 'https://cs-webapps.bu.edu/airlin/dadjokes';
 
+/** Represents a single Joke from the API */
 interface Joke {
-  text: string;
-  name: string;
+  text: string;  
+  name: string; 
 }
 
+
 interface Picture {
-  image_url: string;
+  image_url: string;  
 }
 
 export default function IndexScreen() {
@@ -26,14 +34,9 @@ export default function IndexScreen() {
         fetch(`${BASE_URL}/api/random`),
         fetch(`${BASE_URL}/api/random_picture`),
       ]);
-
-      const jokeData = await jokeRes.json();
-      const pictureData = await pictureRes.json();
-
-      setJoke(jokeData);
-      setPicture(pictureData);
+      setJoke(await jokeRes.json());
+      setPicture(await pictureRes.json());
     } catch (error) {
-      console.error('Error fetching data:', error);
     } finally {
       setLoading(false);
     }
@@ -74,7 +77,7 @@ export default function IndexScreen() {
         />
       )}
 
-    <Button title="Tell Me Another!" onPress={fetchData} />
+      <Button title="Tell Me Another!" onPress={fetchData} />
 
     </View>
   );
