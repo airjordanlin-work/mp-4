@@ -1,49 +1,37 @@
+/**
+ * profile.tsx
+ *
+ * Displays the logged-in user's own profile page.
+ * Shows their profile picture, username, bio, follower/following counts,
+ * and a scrollable list of all their posts.
+ *
+ * @author Jordan Lin
+ */
 import { useEffect, useState } from 'react';
-import {
-  View, Text, FlatList, Image, StyleSheet,
-  ActivityIndicator, SafeAreaView,
-} from 'react-native';
-import { TOKEN, PROFILE_ID, BASE_URL } from '../../constants/Auth';
+import { View, Text, FlatList, Image, StyleSheet, ActivityIndicator, SafeAreaView } from 'react-native';
+import { useAuth } from '../../constants/AuthContext';
+import { BASE_URL } from '../../constants/Auth';
+import { styles } from '../../assets/my_styles';
 
-type Profile = {
-  id: number;
-  username: string;
-  display_name: string;
-  bio_text: string;             
-  profile_image_url: string | null;  
-  num_followers: number;        
-  num_following: number;         
-};
-
-type Post = {
-  id: number;
-  caption: string;
-  timestamp: string;
-  profile: number;
-  photos: Photo[];
-};
-
-type Photo = {
-  id: number;
-  image: string | null;
-  timestamp: string;
-};
+type Photo   = { id: number; image: string | null; timestamp: string };
+type Post    = { id: number; caption: string; timestamp: string; profile: number; photos: Photo[] };
+type Profile = { id: number; username: string; display_name: string; bio_text: string; profile_image_url: string | null; num_followers: number; num_following: number };
 
 export default function ProfileScreen() {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [posts, setPosts]     = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
+  const { token, profileId }  = useAuth();
 
+  /**
+   * The profile response includes both profile info and their posts array.
+   */
   useEffect(() => {
-    const headers = { Authorization: `Token ${TOKEN}` };
-  
-    fetch(`${BASE_URL}/api/profiles/${PROFILE_ID}/`, { headers })
+    fetch(`${BASE_URL}/api/profiles/${profileId}/`, {
+      headers: { Authorization: `Token ${token}` },
+    })
       .then(r => r.json())
-      .then(prof => {
-        console.log('profile:', JSON.stringify(prof));
-        setProfile(prof);
-        setPosts(prof.posts); 
-      })
+      .then(prof => { setProfile(prof); setPosts(prof.posts); })
       .finally(() => setLoading(false));
   }, []);
 
@@ -71,33 +59,13 @@ export default function ProfileScreen() {
         renderItem={({ item }) => (
           <View style={styles.card}>
             {item.photos?.[0]?.image && (
-                <Image 
-                  source={{ uri: `https://cs-webapps.bu.edu${item.photos[0].image}` }} 
-                  style={styles.postImage} 
-                />
-              )}
+              <Image source={{ uri: `https://cs-webapps.bu.edu${item.photos[0].image}` }} style={styles.postImage} />
+            )}
             <Text style={styles.postText}>{item.caption}</Text>
-            <Text style={styles.date}>
-              {new Date(item.timestamp).toLocaleDateString()}
-            </Text>
+            <Text style={styles.date}>{new Date(item.timestamp).toLocaleDateString()}</Text>
           </View>
         )}
       />
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container:     { flex: 1, backgroundColor: '#fff' },
-  profileHeader: { alignItems: 'center', padding: 24, borderBottomWidth: 1, borderColor: '#eee' },
-  avatar:        { width: 80, height: 80, borderRadius: 40, marginBottom: 12 },
-  username:      { fontSize: 20, fontWeight: 'bold', marginBottom: 4 },
-  bio:           { color: '#555', textAlign: 'center', marginBottom: 12 },
-  stats:         { flexDirection: 'row', gap: 24 },
-  stat:          { fontWeight: '600' },
-  postsTitle:    { fontSize: 18, fontWeight: 'bold', marginTop: 20, alignSelf: 'flex-start' },
-  card:          { padding: 16, borderBottomWidth: 1, borderColor: '#eee' },
-  postImage:     { width: '100%', height: 180, borderRadius: 8, marginBottom: 8 },
-  postText:      { fontSize: 15, marginBottom: 4 },
-  date:          { color: '#888', fontSize: 12 },
-});
